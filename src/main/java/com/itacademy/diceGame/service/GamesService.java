@@ -6,6 +6,6 @@ import com.itacademy.diceGame.model.entity.Game;
 import java.util.List;
 
 public interface GamesService {
-    public List<GameDto> getGamesPlayerByID(Long id);
-    public GameDto gameToDto(Game game);
+    public List<GameDto> getAllGamesByPlayerId(Long id);
+    public GameDto gameEntityToDto(Game game);
 }

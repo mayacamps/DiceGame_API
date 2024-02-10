@@ -18,10 +18,9 @@ import java.util.List;
 @RequestMapping("/api/v1/players")
 public class PlayerController {
     private final PlayerService playerService;
-    private final GamesService gamesService;
 
     @GetMapping("/{id}/games")
-    public ResponseEntity<List<GameDto>> getGamesPlayerById(@PathVariable(value = "id") Long id){
-        return ResponseEntity.ok().body(gamesService.getGamesPlayerByID(id));
+    public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") Long id){
+        return ResponseEntity.ok().body(playerService.getAllGamesByPlayerId(id));
     }
 }
