@@ -9,9 +9,9 @@ import java.io.Serializable;
 
 @Entity
 @Data
+@Table(name = "games")
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "games")
 public class Game implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

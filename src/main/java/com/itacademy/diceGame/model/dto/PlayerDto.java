@@ -18,7 +18,7 @@ public class PlayerDto {
     }
 
     private String getPrettySuccessRate(Double avgSuccessRate){
-        if (avgSuccessRate == null) return "NO GAMES PLAYED YET";
+        if (avgSuccessRate == null) return "NO GAMES SAVED";
         return String.valueOf(avgSuccessRate + " %");
     }
 }
