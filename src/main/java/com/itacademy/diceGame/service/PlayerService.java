@@ -9,4 +9,5 @@ public interface PlayerService {
     public List<GameDto> getAllGamesByPlayerId(Long id);
 
     public List<PlayerDto> getAllPlayersWithSuccessRate();
+    public GameDto playGame(Long id);
 }

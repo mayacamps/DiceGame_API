@@ -38,6 +38,31 @@ public class PlayerServiceImpl implements PlayerService {
         return playerDtoList;
     }
 
+    @Override
+    public GameDto playGame(Long id) {
+        Player player = getPlayerByID(id);
+        GameDto gameDto = gamesService.playGame(player);
+        updateSuccessRate(player, gameDto);
+        return gameDto;
+    }
+
+    private void updateSuccessRate(Player player, GameDto gameDto) {
+        Double successRate = player.getAvgSuccessRate();
+        double isGameWon = 0d;
+        if (gameDto.hasWon()){
+            isGameWon = 1.0d;
+        }
+        if (successRate == null){
+            successRate = isGameWon * 100;
+        } else {
+            int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
+            int gamesWon = (int) (successRate * gamesPlayed) / 100;
+            successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
+        }
+        player.setAvgSuccessRate(successRate);
+        playerRepository.save(player);
+    }
+
     private Double getSuccessRate(Player player){
         try {
             return player.getAvgSuccessRate();

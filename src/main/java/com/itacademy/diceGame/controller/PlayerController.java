@@ -6,10 +6,7 @@ import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +23,10 @@ public class PlayerController {
     @GetMapping("/{id}/games")
     public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") Long id){
         return ResponseEntity.ok().body(playerService.getAllGamesByPlayerId(id));
+    }
+
+    @PostMapping("/{id}/games")
+    public ResponseEntity<GameDto> playGame(@PathVariable(value = "id") Long id){
+        return ResponseEntity.ok().body(playerService.playGame(id));
     }
 }
