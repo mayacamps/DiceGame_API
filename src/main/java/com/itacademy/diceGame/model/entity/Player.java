@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Player implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "varchar(50) default 'UNKNOWN'")
     private String name;
