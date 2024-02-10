@@ -15,11 +15,10 @@ public class GameDto {
     public GameDto(int dice1, int dice2){
         this.dice1 = dice1;
         this.dice2 = dice2;
-        this.result = hasWon(dice1, dice2);
+        this.result = hasWon(dice1, dice2) ? "HAS WON" : "HAS LOST"; ;
     }
 
-    private String hasWon(int dice1, int dice2){
-        boolean won = dice1 + dice2 == 7;
-        return won ? "HAS WON" : "HAS LOST";
+    public boolean hasWon(int dice1, int dice2){
+        return dice1 + dice2 == 7;
     }
 }

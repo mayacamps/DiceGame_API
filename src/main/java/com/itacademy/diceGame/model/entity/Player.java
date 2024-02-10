@@ -17,9 +17,13 @@ public class Player implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(columnDefinition = "varchar(50) default 'UNKNOWN'")
+    @Column(columnDefinition = "varchar(50) default 'ANONYMOUS'")
     private String name;
     @Column(columnDefinition = "datetime default current_timestamp")
     private LocalDate registration_date;
+    private Double avgSuccessRate;
 
+    public Player(String name){
+        this.name = name;
+    }
 }

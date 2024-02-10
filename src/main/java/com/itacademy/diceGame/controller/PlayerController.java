@@ -1,6 +1,7 @@
 package com.itacademy.diceGame.controller;
 
 import com.itacademy.diceGame.model.dto.GameDto;
+import com.itacademy.diceGame.model.dto.PlayerDto;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,10 @@ public class PlayerController {
     @GetMapping("/{id}/games")
     public ResponseEntity<List<GameDto>> getGamesPlayerById(@PathVariable(value = "id") Long id){
         return ResponseEntity.ok().body(gamesService.getGamesPlayerByID(id));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<PlayerDto>> getAllPlayersWithSuccessRate(){
+        return ResponseEntity.ok().body(playerService.getAllPlayersWithSuccessRate());
     }
 }

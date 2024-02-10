@@ -1,13 +1,36 @@
 package com.itacademy.diceGame.service.impl;
 
+import com.itacademy.diceGame.model.dto.PlayerDto;
+import com.itacademy.diceGame.model.entity.Player;
+import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import com.itacademy.diceGame.repository.PlayerRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
     private PlayerRepository playerRepository;
+
+    public List<PlayerDto> getAllPlayersWithSuccessRate(){
+        List<Player> playerEntityList = playerRepository.findAll();
+        List<PlayerDto> playerDtoList = new ArrayList<>();
+        playerEntityList.forEach( player -> {
+            playerDtoList.add(new PlayerDto(player.getName(), getSuccessRate(player)));
+        });
+        return playerDtoList;
+    }
+    
+    private Double getSuccessRate(Player player){
+        try {
+            return player.getAvgSuccessRate();
+        } catch (NullPointerException ex){
+            return null;
+        }
+    }
 }
