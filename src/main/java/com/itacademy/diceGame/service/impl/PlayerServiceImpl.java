@@ -1,5 +1,6 @@
 package com.itacademy.diceGame.service.impl;
 
+import com.itacademy.diceGame.exceptions.NoGamesSavedException;
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
@@ -23,10 +24,19 @@ public class PlayerServiceImpl implements PlayerService {
     private Player getPlayerByID(Long id){
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
     }
+    @Override
+    public GameDto playGame(Long id) {
+        Player player = getPlayerByID(id);
+        GameDto gameDto = gamesService.playGame(player);
+        updateSuccessRate(player, gameDto);
+        return gameDto;
+    }
 
     public List<GameDto> getAllGamesByPlayerId(Long id){
         getPlayerByID(id);
-        return gamesService.getAllGamesByPlayerId(id);
+        List<GameDto> gameDtoList = gamesService.getAllGamesByPlayerId(id);
+        if (gameDtoList.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
+        return gameDtoList;
     }
 
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
@@ -36,14 +46,6 @@ public class PlayerServiceImpl implements PlayerService {
             playerDtoList.add(new PlayerDto(player.getName(), getSuccessRate(player)));
         });
         return playerDtoList;
-    }
-
-    @Override
-    public GameDto playGame(Long id) {
-        Player player = getPlayerByID(id);
-        GameDto gameDto = gamesService.playGame(player);
-        updateSuccessRate(player, gameDto);
-        return gameDto;
     }
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
@@ -69,5 +71,14 @@ public class PlayerServiceImpl implements PlayerService {
         } catch (NullPointerException ex){
             return null;
         }
+    }
+
+    @Override
+    public double getAvgSuccessRate() {
+        List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
+        return playerDtoList.stream()
+                .filter(playerDto -> playerDto.getSuccessRate() != null)
+                .mapToDouble(PlayerDto::getSuccessRate).average()
+                .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
     }
 }

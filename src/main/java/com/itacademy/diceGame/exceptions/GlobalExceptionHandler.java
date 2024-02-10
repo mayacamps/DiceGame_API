@@ -10,7 +10,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PlayerNotFoundException.class)
-    public ResponseEntity<String> BranchNotFoundException(PlayerNotFoundException ex) {
+    public ResponseEntity<String> PlayerNotFoundException(PlayerNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoGamesSavedException.class)
+    public ResponseEntity<String> NoGamesSavedException(NoGamesSavedException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
