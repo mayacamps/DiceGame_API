@@ -47,7 +47,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
-        Double successRate = player.getAvgSuccessRate();
+        Double successRate = player.getSuccessRate();
         double isGameWon = 0d;
         if (gameDto.hasWon()){
             isGameWon = 1.0d;
@@ -59,13 +59,13 @@ public class PlayerServiceImpl implements PlayerService {
             int gamesWon = (int) (successRate * gamesPlayed) / 100;
             successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
         }
-        player.setAvgSuccessRate(successRate);
+        player.setSuccessRate(successRate);
         playerRepository.save(player);
     }
 
     private Double getSuccessRate(Player player){
         try {
-            return player.getAvgSuccessRate();
+            return player.getSuccessRate();
         } catch (NullPointerException ex){
             return null;
         }

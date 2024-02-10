@@ -10,15 +10,15 @@ import java.util.Objects;
 @Data
 public class PlayerDto {
     private String name;
-    private String avgSuccessRate;
+    private String successRate;
 
-    public PlayerDto(String name, Double avgSuccessRate){
+    public PlayerDto(String name, Double successRate){
         this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
-        this.avgSuccessRate = getPrettySuccessRate(avgSuccessRate);
+        this.successRate = getPrettySuccessRate(successRate);
     }
 
-    private String getPrettySuccessRate(Double avgSuccessRate){
-        if (avgSuccessRate == null) return "NO GAMES SAVED";
-        return String.valueOf(avgSuccessRate + " %");
+    private String getPrettySuccessRate(Double successRate){
+        if (successRate == null) return "NO GAMES SAVED";
+        return String.valueOf(successRate + " %");
     }
 }

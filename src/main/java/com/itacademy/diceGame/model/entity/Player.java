@@ -21,7 +21,7 @@ public class Player implements Serializable {
     private String name;
     @Column(columnDefinition = "datetime default current_timestamp")
     private LocalDate registration_date;
-    private Double avgSuccessRate;
+    private Double successRate;
 
     public Player(String name){
         this.name = name;
