@@ -54,6 +54,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
         Double successRate = player.getSuccessRate();
+        System.out.println(successRate);
         double isGameWon = 0d;
         if (gameDto.hasWon()){
             isGameWon = 1.0d;
@@ -62,8 +63,11 @@ public class PlayerServiceImpl implements PlayerService {
             successRate = isGameWon * 100;
         } else {
             int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
-            int gamesWon = (int) (successRate * (gamesPlayed - 1)) / 100;
+            System.out.println(gamesPlayed);
+            int gamesWon = (int) Math.ceil((successRate / 100) * (gamesPlayed - 1));
+            System.out.println(gamesWon);
             successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
+            System.out.println(successRate);
         }
         player.setSuccessRate(successRate);
         playerRepository.save(player);
