@@ -11,6 +11,9 @@ import com.itacademy.diceGame.repository.PlayerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class PlayerServiceImpl implements PlayerService {
         updateSuccessRate(player, gameDto);
         return gameDto;
     }
-
+    @Override
     public List<GameDto> getAllGamesByPlayerId(Long id){
         getPlayerByID(id);
         List<GameDto> gameDtoList = gamesService.getAllGamesByPlayerId(id);
@@ -39,6 +42,7 @@ public class PlayerServiceImpl implements PlayerService {
         return gameDtoList;
     }
 
+    @Override
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
         List<Player> playerEntityList = playerRepository.findAll();
         List<PlayerDto> playerDtoList = new ArrayList<>();
@@ -58,7 +62,7 @@ public class PlayerServiceImpl implements PlayerService {
             successRate = isGameWon * 100;
         } else {
             int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
-            int gamesWon = (int) (successRate * gamesPlayed) / 100;
+            int gamesWon = (int) (successRate * (gamesPlayed - 1)) / 100;
             successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
         }
         player.setSuccessRate(successRate);
@@ -76,9 +80,10 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public double getAvgSuccessRate() {
         List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
-        return playerDtoList.stream()
+        double avg = playerDtoList.stream()
                 .filter(playerDto -> playerDto.getSuccessRate() != null)
                 .mapToDouble(PlayerDto::getSuccessRate).average()
                 .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
+        return new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }

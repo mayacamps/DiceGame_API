@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.text.WordUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -14,7 +16,6 @@ public class PlayerDto {
 
     public PlayerDto(String name, Double successRate){
         this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
-        this.successRate = successRate;
+        this.successRate = new BigDecimal(successRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
-
 }

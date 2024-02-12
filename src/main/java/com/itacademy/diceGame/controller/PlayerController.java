@@ -19,7 +19,6 @@ public class PlayerController {
     @GetMapping("/")
     public ResponseEntity<List<PlayerDto>> getAllPlayersWithSuccessRate(){
         return ResponseEntity.ok().body(playerService.getAllPlayersWithSuccessRate());
-        /* TODO round success rate to .2f */
     }
 
     @GetMapping("/{id}/games")
@@ -35,6 +34,5 @@ public class PlayerController {
     @GetMapping("/ranking")
     public ResponseEntity<Double> getAvgSuccessRate(){
         return ResponseEntity.ok().body(playerService.getAvgSuccessRate());
-        /* TODO round success rate to .2f */
     }
 }
