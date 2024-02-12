@@ -16,6 +16,10 @@ public class PlayerDto {
 
     public PlayerDto(String name, Double successRate){
         this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
-        this.successRate = new BigDecimal(successRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        this.successRate = formatDouble(successRate);
+    }
+
+    private Double formatDouble(Double successRate){
+        return (successRate == null) ? null : new BigDecimal(successRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }
