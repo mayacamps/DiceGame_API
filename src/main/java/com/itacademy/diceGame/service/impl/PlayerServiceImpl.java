@@ -27,12 +27,15 @@ public class PlayerServiceImpl implements PlayerService {
     private Player getPlayerByID(Long id){
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
     }
+
     @Override
-    public GameDto playGame(Long id) {
-        Player player = getPlayerByID(id);
-        GameDto gameDto = gamesService.playGame(player);
-        updateSuccessRate(player, gameDto);
-        return gameDto;
+    public List<PlayerDto> getAllPlayersWithSuccessRate(){
+        List<Player> playerEntityList = playerRepository.findAll();
+        List<PlayerDto> playerDtoList = new ArrayList<>();
+        playerEntityList.forEach( player -> {
+            playerDtoList.add(new PlayerDto(player.getName(), getSuccessRate(player)));
+        });
+        return playerDtoList;
     }
     @Override
     public List<GameDto> getAllGamesByPlayerId(Long id){
@@ -43,13 +46,27 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerDto> getAllPlayersWithSuccessRate(){
-        List<Player> playerEntityList = playerRepository.findAll();
-        List<PlayerDto> playerDtoList = new ArrayList<>();
-        playerEntityList.forEach( player -> {
-            playerDtoList.add(new PlayerDto(player.getName(), getSuccessRate(player)));
-        });
-        return playerDtoList;
+    public GameDto playGame(Long id) {
+        Player player = getPlayerByID(id);
+        GameDto gameDto = gamesService.playGame(player);
+        updateSuccessRate(player, gameDto);
+        return gameDto;
+    }
+
+    @Override
+    public void deleteAllGames(Long id) {
+        Player player = getPlayerByID(id);
+        gamesService.deleteAllGames(player);
+    }
+
+    @Override
+    public double getAvgSuccessRate() {
+        List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
+        double avg = playerDtoList.stream()
+                .filter(playerDto -> playerDto.getSuccessRate() != null)
+                .mapToDouble(PlayerDto::getSuccessRate).average()
+                .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
+        return new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
@@ -75,15 +92,5 @@ public class PlayerServiceImpl implements PlayerService {
         } catch (NullPointerException ex){
             return null;
         }
-    }
-
-    @Override
-    public double getAvgSuccessRate() {
-        List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
-        double avg = playerDtoList.stream()
-                .filter(playerDto -> playerDto.getSuccessRate() != null)
-                .mapToDouble(PlayerDto::getSuccessRate).average()
-                .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
-        return new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }

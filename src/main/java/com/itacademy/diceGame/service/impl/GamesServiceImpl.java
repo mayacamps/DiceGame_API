@@ -33,6 +33,11 @@ public class GamesServiceImpl implements GamesService {
     }
 
     @Override
+    public void deleteAllGames(Player player) {
+        gamesRepository.deleteByPlayerId(player.getId());
+    }
+
+    @Override
     public GameDto gameEntityToDto(Game game) {
         return new GameDto(game.getDice1(), game.getDice2());
     }

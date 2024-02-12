@@ -31,6 +31,11 @@ public class PlayerController {
         return ResponseEntity.ok().body(playerService.playGame(id));
     }
 
+    @DeleteMapping("/{id}/games")
+    public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") Long id){
+        return ResponseEntity.ok().body("Deleted all games from player with id: " + id);
+    }
+
     @GetMapping("/ranking")
     public ResponseEntity<Double> getAvgSuccessRate(){
         return ResponseEntity.ok().body(playerService.getAvgSuccessRate());
