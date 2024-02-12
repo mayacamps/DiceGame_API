@@ -17,6 +17,9 @@ import java.util.List;
 public class GamesServiceImpl implements GamesService {
     private GamesRepository gamesRepository;
 
+    private List<Game> getGames(Long id){
+        return gamesRepository.findByPlayerId(id);
+    }
     @Override
     public GameDto playGame(Player player) {
         GameDto gameDto = new GameDto(RandomDiceGenerator.throwDice(), RandomDiceGenerator.throwDice());
@@ -26,7 +29,7 @@ public class GamesServiceImpl implements GamesService {
 
     @Override
     public List<GameDto> getAllGamesByPlayerId(Long id) {
-        List<Game> games = gamesRepository.findByPlayerId(id);
+        List<Game> games = getGames(id);
         List<GameDto> gameDtos = new ArrayList<GameDto>();
         games.forEach(game -> gameDtos.add(gameEntityToDto(game)));
         return gameDtos;
@@ -34,7 +37,8 @@ public class GamesServiceImpl implements GamesService {
 
     @Override
     public void deleteAllGames(Player player) {
-        gamesRepository.deleteByPlayerId(player.getId());
+        List<Game> games = getGames(player.getId());
+        games.forEach(gamesRepository::delete);
     }
 
     @Override

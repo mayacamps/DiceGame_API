@@ -33,7 +33,8 @@ public class PlayerController {
 
     @DeleteMapping("/{id}/games")
     public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") Long id){
-        return ResponseEntity.ok().body("Deleted all games from player with id: " + id);
+        playerService.deleteAllGames(id);
+        return ResponseEntity.ok().body("Deleted all games from player with ID: " + id);
     }
 
     @GetMapping("/ranking")
