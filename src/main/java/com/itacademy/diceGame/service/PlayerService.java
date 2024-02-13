@@ -12,7 +12,7 @@ public interface PlayerService {
     public GameDto playGame(Long id);
     public void deleteAllGames(Long id);
     public double getAvgSuccessRate();
-    public PlayerDto getWinner();
+    public List<PlayerDto> getWinner();
     public List<PlayerDto> getLoser();
     public PlayerDto playerEntityToDto(Player player);
 }

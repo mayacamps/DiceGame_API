@@ -66,20 +66,23 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public double getAvgSuccessRate() {
         List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
-        double avg = playerDtoList.stream()
+        return playerDtoList.stream()
                 .filter(playerDto -> playerDto.getSuccessRate() != null)
                 .mapToDouble(PlayerDto::getSuccessRate).average()
                 .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
-        return new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     @Override
-    public PlayerDto getWinner() {
+    public List<PlayerDto> getWinner() {
         List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
-        return playerDtoList.stream()
+        PlayerDto highestScore = playerDtoList.stream()
                 .filter(playerDto -> playerDto.getSuccessRate() != null)
                 .max(Comparator.comparing(PlayerDto::getSuccessRate))
                 .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
+
+        return playerDtoList.stream()
+                .filter(playerDto -> Objects.equals(playerDto.getSuccessRate(), highestScore.getSuccessRate()))
+                .toList();
     }
 
     @Override
