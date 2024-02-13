@@ -32,4 +32,7 @@ public class Player implements Serializable {
         this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
     }
 
+    public void setName(String name) {
+        this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
+    }
 }

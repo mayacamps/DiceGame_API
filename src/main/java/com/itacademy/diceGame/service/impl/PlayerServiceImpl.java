@@ -40,13 +40,23 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest) {
-        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(playerDtoRequest.getName());
+    public PlayerDto createPlayer(PlayerDto playerDto) {
+        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(playerDto.getName());
         if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
-            throw new PlayerAlreadyExistsException("Player already exists with name: " + playerDtoRequest.getName().toUpperCase());
+            throw new PlayerAlreadyExistsException("Player already exists with name: " + playerDto.getName().toUpperCase());
         }
-        Player newPlayer = playerRepository.save(new Player(playerDtoRequest.getName()));
+        Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
         return playerEntityToDto(newPlayer);
+    }
+
+    @Override
+    public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
+        Player player = getPlayerByID(id);
+        if (!player.getName().equalsIgnoreCase(playerDtoRequest.getName())){
+            checkNamePlayerUnused(playerDtoRequest.getName());
+            player.setName(playerDtoRequest.getName());
+        }
+        return playerEntityToDto(playerRepository.save(player));
     }
 
     @Override
@@ -133,6 +143,13 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest){
         return new Player(playerDtoRequest.getName());
+    }
+
+    private void checkNamePlayerUnused(String name){
+        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(name);
+        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
+            throw new PlayerAlreadyExistsException("Player already exists with name: " + name.toUpperCase());
+        }
     }
 
 }

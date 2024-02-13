@@ -2,9 +2,11 @@ package com.itacademy.diceGame.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.util.BindErrorUtils;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,6 +26,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindErrorUtils.resolveAndJoin(ex.getFieldErrors()));
+    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex){

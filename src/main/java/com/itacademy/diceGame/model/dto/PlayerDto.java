@@ -1,5 +1,6 @@
 package com.itacademy.diceGame.model.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.text.WordUtils;
@@ -15,7 +16,7 @@ public class PlayerDto {
     private Double successRate;
 
     public PlayerDto(String name, Double successRate){
-        this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
+        this.name = name;
         this.successRate = formatDouble(successRate);
     }
 

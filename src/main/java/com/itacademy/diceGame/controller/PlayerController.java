@@ -24,8 +24,13 @@ public class PlayerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
-        return ResponseEntity.ok().body(playerService.createPlayer(playerDtoRequest));
+    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDto playerDto){
+        return ResponseEntity.ok().body(playerService.createPlayer(playerDto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+        return ResponseEntity.ok().body(playerService.updateNamePlayer(id, playerDtoRequest));
     }
 
     @GetMapping("/{id}/games")
