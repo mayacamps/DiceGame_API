@@ -3,15 +3,14 @@ package com.itacademy.diceGame.model.dto;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.text.WordUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
 
 @NoArgsConstructor
 @Data
 public class PlayerDto {
+    @Size(min = 2, max = 20)
     private String name;
     private Double successRate;
 

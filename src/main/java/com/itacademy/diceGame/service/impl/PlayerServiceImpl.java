@@ -33,23 +33,21 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto createPlayer(PlayerDto playerDto) {
-        checkNamePlayerUnused(playerDto.getName());
         Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
         return playerEntityToDto(newPlayer);
     }
 
     @Override
-    public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
+    public PlayerDto updateNamePlayer(String id, PlayerDtoRequest playerDtoRequest) {
         Player player = getPlayerByID(id);
         if (!player.getName().equalsIgnoreCase(playerDtoRequest.getName())){
-            checkNamePlayerUnused(playerDtoRequest.getName());
             player.setName(playerDtoRequest.getName());
         }
         return playerEntityToDto(playerRepository.save(player));
     }
 
     @Override
-    public List<GameDto> getAllGamesByPlayerId(Long id){
+    public List<GameDto> getAllGamesByPlayerId(String id){
         getPlayerByID(id);
         List<GameDto> gameDtoList = gamesService.getAllGamesByPlayerId(id);
         if (gameDtoList.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
@@ -57,7 +55,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public GameDto playGame(Long id) {
+    public GameDto playGame(String id) {
         Player player = getPlayerByID(id);
         GameDto gameDto = gamesService.playGame(player);
         updateSuccessRate(player, gameDto);
@@ -65,7 +63,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void deleteAllGames(Long id) {
+    public void deleteAllGames(String id) {
         Player player = getPlayerByID(id);
         gamesService.deleteAllGames(player);
         player.setSuccessRate(null);
@@ -117,15 +115,8 @@ public class PlayerServiceImpl implements PlayerService {
         return new Player(playerDtoRequest.getName());
     }
 
-    private Player getPlayerByID(Long id){
+    private Player getPlayerByID(String id){
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
-    }
-
-    private void checkNamePlayerUnused(String name){
-        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(name);
-        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
-            throw new PlayerAlreadyExistsException("Player already exists with name: " + name.toUpperCase());
-        }
     }
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
@@ -144,5 +135,4 @@ public class PlayerServiceImpl implements PlayerService {
         player.setSuccessRate(successRate);
         playerRepository.save(player);
     }
-
 }

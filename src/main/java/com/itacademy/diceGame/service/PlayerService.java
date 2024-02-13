@@ -10,10 +10,10 @@ import java.util.List;
 public interface PlayerService {
     List<PlayerDto> getAllPlayersWithSuccessRate();
     PlayerDto createPlayer(PlayerDto playerDto);
-    PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest);
-    List<GameDto> getAllGamesByPlayerId(Long id);
-    GameDto playGame(Long id);
-    void deleteAllGames(Long id);
+    PlayerDto updateNamePlayer(String id, PlayerDtoRequest playerDtoRequest);
+    List<GameDto> getAllGamesByPlayerId(String id);
+    GameDto playGame(String id);
+    void deleteAllGames(String id);
     double getAvgSuccessRate();
     List<PlayerDto> getWinner();
     List<PlayerDto> getLoser();

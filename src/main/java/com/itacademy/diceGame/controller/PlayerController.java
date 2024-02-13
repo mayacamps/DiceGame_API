@@ -29,22 +29,22 @@ public class PlayerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") String id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
         return ResponseEntity.ok().body(playerService.updateNamePlayer(id, playerDtoRequest));
     }
 
     @GetMapping("/{id}/games")
-    public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") Long id){
+    public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") String id){
         return ResponseEntity.ok().body(playerService.getAllGamesByPlayerId(id));
     }
 
     @PostMapping("/{id}/games")
-    public ResponseEntity<GameDto> playGame(@PathVariable(value = "id") Long id){
+    public ResponseEntity<GameDto> playGame(@PathVariable(value = "id") String id){
         return ResponseEntity.ok().body(playerService.playGame(id));
     }
 
     @DeleteMapping("/{id}/games")
-    public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") Long id){
+    public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") String id){
         playerService.deleteAllGames(id);
         return ResponseEntity.ok().body("Deleted all games from player with ID: " + id);
     }

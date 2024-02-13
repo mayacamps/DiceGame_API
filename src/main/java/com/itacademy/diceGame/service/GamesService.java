@@ -7,7 +7,7 @@ import com.itacademy.diceGame.model.entity.Player;
 import java.util.List;
 
 public interface GamesService {
-    List<GameDto> getAllGamesByPlayerId(Long id);
+    List<GameDto> getAllGamesByPlayerId(String id);
     GameDto playGame(Player player);
     void deleteAllGames(Player player);
     GameDto gameEntityToDto(Game game);
