@@ -16,6 +16,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -80,6 +82,19 @@ public class PlayerServiceImpl implements PlayerService {
                 .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
     }
 
+    @Override
+    public List<PlayerDto> getLoser() {
+        List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
+        PlayerDto lowestScore = playerDtoList.stream()
+                .filter(playerDto -> playerDto.getSuccessRate() != null)
+                .min(Comparator.comparing(PlayerDto::getSuccessRate))
+                .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
+
+        return playerDtoList.stream()
+                .filter(playerDto -> Objects.equals(playerDto.getSuccessRate(), lowestScore.getSuccessRate()))
+                .toList();
+    }
+
     private void updateSuccessRate(Player player, GameDto gameDto) {
         Double successRate = player.getSuccessRate();
         double isGameWon = 0d;
@@ -97,4 +112,8 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.save(player);
     }
 
+    @Override
+    public PlayerDto playerEntityToDto(Player player) {
+        return new PlayerDto(player.getName(), player.getSuccessRate());
+    }
 }

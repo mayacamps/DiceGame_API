@@ -46,4 +46,9 @@ public class PlayerController {
     public ResponseEntity<PlayerDto> getWinner(){
         return ResponseEntity.ok().body(playerService.getWinner());
     }
+
+    @GetMapping("/ranking/loser")
+    public ResponseEntity<List<PlayerDto>> getLoser(){
+        return ResponseEntity.ok().body(playerService.getLoser());
+    }
 }

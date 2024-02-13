@@ -2,6 +2,7 @@ package com.itacademy.diceGame.service;
 
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
+import com.itacademy.diceGame.model.entity.Player;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface PlayerService {
     public void deleteAllGames(Long id);
     public double getAvgSuccessRate();
     public PlayerDto getWinner();
+    public List<PlayerDto> getLoser();
+    public PlayerDto playerEntityToDto(Player player);
 }
