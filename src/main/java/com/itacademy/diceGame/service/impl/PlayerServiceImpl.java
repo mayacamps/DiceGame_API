@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class PlayerServiceImpl implements PlayerService {
         List<Player> playerEntityList = playerRepository.findAll();
         List<PlayerDto> playerDtoList = new ArrayList<>();
         playerEntityList.forEach( player -> {
-            playerDtoList.add(new PlayerDto(player.getName(), getSuccessRate(player)));
+            playerDtoList.add(new PlayerDto(player.getName(), player.getSuccessRate()));
         });
         return playerDtoList;
     }
@@ -88,11 +87,4 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.save(player);
     }
 
-    private Double getSuccessRate(Player player){
-        try {
-            return player.getSuccessRate();
-        } catch (NullPointerException ex){
-            return null;
-        }
-    }
 }
