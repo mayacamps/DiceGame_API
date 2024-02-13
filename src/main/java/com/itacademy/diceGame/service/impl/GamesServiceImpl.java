@@ -7,24 +7,15 @@ import com.itacademy.diceGame.repository.*;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.utils.RandomDiceGenerator;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GamesServiceImpl implements GamesService {
-    private GamesRepository gamesRepository;
-
-    private List<Game> getGames(Long id){
-        return gamesRepository.findByPlayerId(id);
-    }
-    @Override
-    public GameDto playGame(Player player) {
-        GameDto gameDto = new GameDto(RandomDiceGenerator.throwDice(), RandomDiceGenerator.throwDice());
-        gamesRepository.save(gameDtoToEntity(gameDto, player));
-        return gameDto;
-    }
+    private final GamesRepository gamesRepository;
 
     @Override
     public List<GameDto> getAllGamesByPlayerId(Long id) {
@@ -32,6 +23,13 @@ public class GamesServiceImpl implements GamesService {
         List<GameDto> gameDtos = new ArrayList<GameDto>();
         games.forEach(game -> gameDtos.add(gameEntityToDto(game)));
         return gameDtos;
+    }
+
+    @Override
+    public GameDto playGame(Player player) {
+        GameDto gameDto = new GameDto(RandomDiceGenerator.throwDice(), RandomDiceGenerator.throwDice());
+        gamesRepository.save(gameDtoToEntity(gameDto, player));
+        return gameDto;
     }
 
     @Override
@@ -48,5 +46,9 @@ public class GamesServiceImpl implements GamesService {
     @Override
     public Game gameDtoToEntity(GameDto gameDto, Player player) {
         return new Game(gameDto.getDice1(), gameDto.getDice2(), player);
+    }
+
+    private List<Game> getGames(Long id){
+        return gamesRepository.findByPlayerId(id);
     }
 }

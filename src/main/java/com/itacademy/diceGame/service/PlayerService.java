@@ -8,15 +8,15 @@ import com.itacademy.diceGame.model.entity.Player;
 import java.util.List;
 
 public interface PlayerService {
-    public List<PlayerDto> getAllPlayersWithSuccessRate();
-    public PlayerDto createPlayer(PlayerDto playerDto);
-    public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest);
-    public List<GameDto> getAllGamesByPlayerId(Long id);
-    public GameDto playGame(Long id);
-    public void deleteAllGames(Long id);
-    public double getAvgSuccessRate();
-    public List<PlayerDto> getWinner();
-    public List<PlayerDto> getLoser();
-    public PlayerDto playerEntityToDto(Player player);
-    public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest);
+    List<PlayerDto> getAllPlayersWithSuccessRate();
+    PlayerDto createPlayer(PlayerDto playerDto);
+    PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest);
+    List<GameDto> getAllGamesByPlayerId(Long id);
+    GameDto playGame(Long id);
+    void deleteAllGames(Long id);
+    double getAvgSuccessRate();
+    List<PlayerDto> getWinner();
+    List<PlayerDto> getLoser();
+    PlayerDto playerEntityToDto(Player player);
+    Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest);
 }

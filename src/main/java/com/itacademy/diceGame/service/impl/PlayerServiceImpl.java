@@ -10,24 +10,16 @@ import com.itacademy.diceGame.model.entity.Player;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import com.itacademy.diceGame.repository.PlayerRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
-    private PlayerRepository playerRepository;
-    private GamesService gamesService;
-
-    private Player getPlayerByID(Long id){
-        return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
-    }
+    private final PlayerRepository playerRepository;
+    private final GamesService gamesService;
 
     @Override
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
@@ -41,10 +33,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto createPlayer(PlayerDto playerDto) {
-        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(playerDto.getName());
-        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
-            throw new PlayerAlreadyExistsException("Player already exists with name: " + playerDto.getName().toUpperCase());
-        }
+        checkNamePlayerUnused(playerDto.getName());
         Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
         return playerEntityToDto(newPlayer);
     }
@@ -118,6 +107,27 @@ public class PlayerServiceImpl implements PlayerService {
                 .toList();
     }
 
+    @Override
+    public PlayerDto playerEntityToDto(Player player) {
+        return new PlayerDto(player.getName(), player.getSuccessRate());
+    }
+
+    @Override
+    public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest){
+        return new Player(playerDtoRequest.getName());
+    }
+
+    private Player getPlayerByID(Long id){
+        return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
+    }
+
+    private void checkNamePlayerUnused(String name){
+        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(name);
+        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
+            throw new PlayerAlreadyExistsException("Player already exists with name: " + name.toUpperCase());
+        }
+    }
+
     private void updateSuccessRate(Player player, GameDto gameDto) {
         Double successRate = player.getSuccessRate();
         double isGameWon = 0d;
@@ -133,23 +143,6 @@ public class PlayerServiceImpl implements PlayerService {
         }
         player.setSuccessRate(successRate);
         playerRepository.save(player);
-    }
-
-    @Override
-    public PlayerDto playerEntityToDto(Player player) {
-        return new PlayerDto(player.getName(), player.getSuccessRate());
-    }
-
-    @Override
-    public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest){
-        return new Player(playerDtoRequest.getName());
-    }
-
-    private void checkNamePlayerUnused(String name){
-        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(name);
-        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
-            throw new PlayerAlreadyExistsException("Player already exists with name: " + name.toUpperCase());
-        }
     }
 
 }
