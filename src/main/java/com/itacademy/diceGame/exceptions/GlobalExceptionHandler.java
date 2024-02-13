@@ -19,8 +19,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(PlayerAlreadyExistsException.class)
+    public ResponseEntity<String> PlayerAlreadyExistsException(PlayerAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("URL not supported.\n\t" + ex.getMessage());
     }
+
 }

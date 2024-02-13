@@ -2,7 +2,9 @@ package com.itacademy.diceGame.controller;
 
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
+import com.itacademy.diceGame.model.dto.request.PlayerDtoRequest;
 import com.itacademy.diceGame.service.PlayerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,11 @@ public class PlayerController {
     @GetMapping("/")
     public ResponseEntity<List<PlayerDto>> getAllPlayersWithSuccessRate(){
         return ResponseEntity.ok().body(playerService.getAllPlayersWithSuccessRate());
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+        return ResponseEntity.ok().body(playerService.createPlayer(playerDtoRequest));
     }
 
     @GetMapping("/{id}/games")
