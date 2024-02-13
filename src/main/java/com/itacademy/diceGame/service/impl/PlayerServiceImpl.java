@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -68,6 +69,15 @@ public class PlayerServiceImpl implements PlayerService {
                 .mapToDouble(PlayerDto::getSuccessRate).average()
                 .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
         return new BigDecimal(avg).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    @Override
+    public PlayerDto getWinner() {
+        List<PlayerDto> playerDtoList = getAllPlayersWithSuccessRate();
+        return playerDtoList.stream()
+                .filter(playerDto -> playerDto.getSuccessRate() != null)
+                .max(Comparator.comparing(PlayerDto::getSuccessRate))
+                .orElseThrow(() -> new NoGamesSavedException("There are no games saved."));
     }
 
     private void updateSuccessRate(Player player, GameDto gameDto) {
