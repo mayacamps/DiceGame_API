@@ -26,18 +26,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
-        if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("User email and password cannot be null");
-        }
-        userRepository.findByEmail(request.getEmail())
-                .ifPresent(user -> {
-                    throw new UserAlreadyExistsException("Email is already registered:" + user.getEmail());
-                });
-        var user = User.builder().firstName(request.getFirstName()).lastName(request.getLastName())
+        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {throw new UserAlreadyExistsException("Email is already registered: " + user.getEmail());});
+        User user = User.builder().firstName(request.getFirstName()).lastName(request.getLastName())
                 .email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER).build();
         userRepository.save(user);
-        var jwt = jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 
@@ -45,9 +39,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public JwtAuthenticationResponse signin(SignInRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        var user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.getEmail()));
-        var jwt = jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 }

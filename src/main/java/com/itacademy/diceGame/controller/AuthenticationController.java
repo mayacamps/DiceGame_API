@@ -5,6 +5,7 @@ import com.itacademy.diceGame.model.dto.request.SignUpRequest;
 import com.itacademy.diceGame.model.dto.response.JwtAuthenticationResponse;
 import com.itacademy.diceGame.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,13 @@ public class AuthenticationController {
 
     @Operation(summary = "SignUp new User")
     @PostMapping("/signup")
-    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody SignUpRequest request) {
+    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody @Valid SignUpRequest request) {
         return ResponseEntity.ok(authenticationService.signup(request));
     }
 
     @Operation(summary = "SignIn User")
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
+    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody @Valid SignInRequest request) {
         return ResponseEntity.ok(authenticationService.signin(request));
     }
 }
