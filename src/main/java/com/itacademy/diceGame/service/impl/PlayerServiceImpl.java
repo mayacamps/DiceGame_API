@@ -1,19 +1,21 @@
 package com.itacademy.diceGame.service.impl;
 
 import com.itacademy.diceGame.exceptions.NoGamesSavedException;
-import com.itacademy.diceGame.exceptions.PlayerAlreadyExistsException;
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
 import com.itacademy.diceGame.model.dto.request.PlayerDtoRequest;
 import com.itacademy.diceGame.model.entity.Player;
+import com.itacademy.diceGame.repository.PlayerRepository;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
-import com.itacademy.diceGame.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

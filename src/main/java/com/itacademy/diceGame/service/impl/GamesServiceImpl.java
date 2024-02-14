@@ -6,7 +6,6 @@ import com.itacademy.diceGame.model.entity.Player;
 import com.itacademy.diceGame.repository.*;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.utils.RandomDiceGenerator;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
