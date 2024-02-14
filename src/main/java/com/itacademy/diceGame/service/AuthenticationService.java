@@ -5,7 +5,6 @@ import com.itacademy.diceGame.model.dto.request.SignUpRequest;
 import com.itacademy.diceGame.model.dto.response.JwtAuthenticationResponse;
 
 public interface AuthenticationService {
-    JwtAuthenticationResponse signUp(SignUpRequest request);
-
-    JwtAuthenticationResponse signIn(SignInRequest request);
+    JwtAuthenticationResponse signup(SignUpRequest request);
+    JwtAuthenticationResponse signin(SignInRequest request);
 }

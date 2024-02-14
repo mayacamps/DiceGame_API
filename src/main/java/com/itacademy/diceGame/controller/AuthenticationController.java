@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/dicegame/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
@@ -21,12 +21,12 @@ public class AuthenticationController {
     @Operation(summary = "SignUp new User")
     @PostMapping("/signup")
     public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(authenticationService.signUp(request));
+        return ResponseEntity.ok(authenticationService.signup(request));
     }
 
     @Operation(summary = "SignIn User")
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authenticationService.signIn(request));
+        return ResponseEntity.ok(authenticationService.signin(request));
     }
 }
