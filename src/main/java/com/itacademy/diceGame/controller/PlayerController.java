@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/players")
+@RequestMapping("/api/v1/dicegame/players")
 public class PlayerController {
     private final PlayerService playerService;
 
