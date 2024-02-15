@@ -16,6 +16,10 @@ import java.util.*;
 public class GamesServiceImpl implements GamesService {
     private final GamesRepository gamesRepository;
 
+    private List<Game> getGames(String id){
+        return gamesRepository.findByPlayerId(id);
+    }
+
     @Override
     public List<GameDto> getAllGamesByPlayerId(String id) {
         List<Game> games = getGames(id);
@@ -45,9 +49,5 @@ public class GamesServiceImpl implements GamesService {
     @Override
     public Game gameDtoToEntity(GameDto gameDto, Player player) {
         return new Game(gameDto.getDice1(), gameDto.getDice2(), player);
-    }
-
-    private List<Game> getGames(String id){
-        return gamesRepository.findByPlayerId(id);
     }
 }

@@ -23,6 +23,10 @@ public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
     private final GamesService gamesService;
 
+    private Player getPlayerByID(String id){
+        return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
+    }
+
     @Override
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
         List<Player> playerEntityList = playerRepository.findAll();
@@ -62,6 +66,23 @@ public class PlayerServiceImpl implements PlayerService {
         GameDto gameDto = gamesService.playGame(player);
         updateSuccessRate(player, gameDto);
         return gameDto;
+    }
+
+    private void updateSuccessRate(Player player, GameDto gameDto) {
+        Double successRate = player.getSuccessRate();
+        double isGameWon = 0d;
+        if (gameDto.hasWon()){
+            isGameWon = 1.0d;
+        }
+        if (successRate == null){
+            successRate = isGameWon * 100;
+        } else {
+            int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
+            int gamesWon = (int) Math.ceil((successRate / 100) * (gamesPlayed - 1));
+            successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
+        }
+        player.setSuccessRate(successRate);
+        playerRepository.save(player);
     }
 
     @Override
@@ -115,26 +136,5 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest){
         return new Player(playerDtoRequest.getName());
-    }
-
-    private Player getPlayerByID(String id){
-        return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
-    }
-
-    private void updateSuccessRate(Player player, GameDto gameDto) {
-        Double successRate = player.getSuccessRate();
-        double isGameWon = 0d;
-        if (gameDto.hasWon()){
-            isGameWon = 1.0d;
-        }
-        if (successRate == null){
-            successRate = isGameWon * 100;
-        } else {
-            int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
-            int gamesWon = (int) Math.ceil((successRate / 100) * (gamesPlayed - 1));
-            successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
-        }
-        player.setSuccessRate(successRate);
-        playerRepository.save(player);
     }
 }
