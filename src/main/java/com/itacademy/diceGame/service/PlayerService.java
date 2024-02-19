@@ -8,8 +8,9 @@ import com.itacademy.diceGame.model.entity.Player;
 import java.util.List;
 
 public interface PlayerService {
+    Player getPlayerByID(String id);
     List<PlayerDto> getAllPlayersWithSuccessRate();
-    PlayerDto createPlayer(PlayerDto playerDto);
+    PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest);
     PlayerDto updateNamePlayer(String id, PlayerDtoRequest playerDtoRequest);
     List<GameDto> getAllGamesByPlayerId(String id);
     GameDto playGame(String id);
