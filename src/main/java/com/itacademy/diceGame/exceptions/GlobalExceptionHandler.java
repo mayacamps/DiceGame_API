@@ -1,6 +1,5 @@
 package com.itacademy.diceGame.exceptions;
 
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,9 +28,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<String> DuplicateKeyException(DuplicateKeyException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Player with this name already exists");
+    @ExceptionHandler(PlayerAlreadyExistsException.class)
+    public ResponseEntity<String> PlayerAlreadyExistsException(PlayerAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -43,6 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> BadCredentialsException(BadCredentialsException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email or password.");
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindErrorUtils.resolveAndJoin(ex.getFieldErrors()));

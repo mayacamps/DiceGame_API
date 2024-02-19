@@ -1,6 +1,7 @@
 package com.itacademy.diceGame.service.impl;
 
 import com.itacademy.diceGame.exceptions.NoGamesSavedException;
+import com.itacademy.diceGame.exceptions.PlayerAlreadyExistsException;
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
@@ -39,6 +40,10 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto createPlayer(PlayerDto playerDto) {
+        playerRepository.findByNameIgnoreCase(playerDto.getName())
+                .ifPresent(player -> {
+                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
+                });
         Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
         return playerEntityToDto(newPlayer);
     }
@@ -55,9 +60,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<GameDto> getAllGamesByPlayerId(String id){
         getPlayerByID(id);
-        List<GameDto> gameDtoList = gamesService.getAllGamesByPlayerId(id);
-        if (gameDtoList.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
-        return gameDtoList;
+        return gamesService.getAllGamesByPlayerId(id);
     }
 
     @Override

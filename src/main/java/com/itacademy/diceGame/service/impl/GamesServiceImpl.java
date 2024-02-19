@@ -1,5 +1,6 @@
 package com.itacademy.diceGame.service.impl;
 
+import com.itacademy.diceGame.exceptions.NoGamesSavedException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.entity.Game;
 import com.itacademy.diceGame.model.entity.Player;
@@ -25,6 +26,7 @@ public class GamesServiceImpl implements GamesService {
         List<Game> games = getGames(id);
         List<GameDto> gameDtos = new ArrayList<GameDto>();
         games.forEach(game -> gameDtos.add(gameEntityToDto(game)));
+        if (gameDtos.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
         return gameDtos;
     }
 
@@ -38,6 +40,7 @@ public class GamesServiceImpl implements GamesService {
     @Override
     public void deleteAllGames(Player player) {
         List<Game> games = getGames(player.getId());
+        if (games.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + player.getId());
         games.forEach(gamesRepository::delete);
     }
 
