@@ -10,7 +10,7 @@ import java.util.List;
 public interface PlayerService {
     Player getPlayerByID(String id);
     List<PlayerDto> getAllPlayersWithSuccessRate();
-    PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest);
+    PlayerDto createPlayer(PlayerDto playerDto);
     PlayerDto updateNamePlayer(String id, PlayerDtoRequest playerDtoRequest);
     List<GameDto> getAllGamesByPlayerId(String id);
     GameDto playGame(String id);

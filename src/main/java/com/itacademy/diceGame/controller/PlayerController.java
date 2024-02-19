@@ -27,8 +27,8 @@ public class PlayerController {
 
     @Operation(summary = "Create new Player")
     @PostMapping("/")
-    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
-        return ResponseEntity.ok().body(playerService.createPlayer(playerDtoRequest));
+    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDto playerDto){
+        return ResponseEntity.ok().body(playerService.createPlayer(playerDto));
     }
 
     @Operation(summary = "Update Player's name")
