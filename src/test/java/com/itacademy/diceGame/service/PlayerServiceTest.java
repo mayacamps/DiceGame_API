@@ -1,4 +1,4 @@
-package com.itacademy.diceGame.unit;
+package com.itacademy.diceGame.service;
 
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DataMongoTest
 public class PlayerServiceTest {
     @Mock
     private PlayerRepository playerRepository;

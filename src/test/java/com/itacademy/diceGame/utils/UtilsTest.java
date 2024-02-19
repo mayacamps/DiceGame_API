@@ -1,4 +1,4 @@
-package com.itacademy.diceGame.unit;
+package com.itacademy.diceGame.utils;
 
 import com.itacademy.diceGame.utils.RandomDiceGenerator;
 import org.junit.jupiter.api.*;

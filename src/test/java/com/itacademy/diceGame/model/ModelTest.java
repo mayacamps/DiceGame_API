@@ -1,4 +1,4 @@
-package com.itacademy.diceGame.unit;
+package com.itacademy.diceGame.model;
 
 import com.itacademy.diceGame.model.dto.GameDto;
 import org.junit.jupiter.api.*;
