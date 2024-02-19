@@ -13,10 +13,7 @@ import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,12 +37,12 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto createPlayer(PlayerDto playerDto) {
-        playerRepository.findByNameIgnoreCase(playerDto.getName())
-                .ifPresent(player -> {
-                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
-                });
-        Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
+    public PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest) {
+        Optional<Player> playerOptional = playerRepository.findByNameIgnoreCase(playerDtoRequest.getName());
+        if (playerOptional.isPresent() && !playerOptional.get().getName().equalsIgnoreCase("ANONYMOUS")){
+            throw new PlayerAlreadyExistsException("Player already exists with name: " + playerDtoRequest.getName().toUpperCase());
+        }
+        Player newPlayer = playerRepository.save(new Player(playerDtoRequest.getName()));
         return playerEntityToDto(newPlayer);
     }
 
