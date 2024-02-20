@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,10 +86,11 @@ public class PlayerServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("PlayerServiceTest - Test for getPlayerByID throws PlayerNotFoundException")
+    @DisplayName("PlayerServiceTest - Test getPlayerByID throws PlayerNotFoundException")
     void findById_no_should_return_player_exceptionIsThrown(){
         PlayerNotFoundException playerNotFoundException = assertThrows(PlayerNotFoundException.class,
                 () -> playerService.getPlayerByID(0L));
+
         assertEquals("Player not found with ID: 0", playerNotFoundException.getMessage());
     }
 
@@ -119,8 +121,8 @@ public class PlayerServiceTest {
 
     @Test
     @Order(6)
-    @DisplayName("PlayerServiceTest - Test for createPlayer returns PlayerAlreadyExistsException")
-    void save_should_not_add_player_with_name_repeated(){
+    @DisplayName("PlayerServiceTest - Test createPlayer returns PlayerAlreadyExistsException")
+    void save_if_name_repeated_thenExceptionIsThrown(){
         Player playerRepeatedName = Player.builder().id(3L).name("lola").build();
         playerList.add(playerRepeatedName);
 
@@ -130,4 +132,29 @@ public class PlayerServiceTest {
 
         assertEquals("Player already exists with given name: Lola", playerAlreadyExistsException.getMessage());
     }
+
+    @Test
+    @Order(7)
+    @DisplayName("PlayerServiceTest - Test update Player")
+    void save_should_update_existing_player(){
+        when(playerRepository.findById(1L)).thenReturn(Optional.of(playerWithName));
+        when(playerRepository.save(any(Player.class))).thenReturn(playerWithName);
+        playerWithName.setName("Lucas");
+
+        PlayerDto updatedPlayer = playerService.updateNamePlayer(1L, new PlayerDtoRequest("Lucas"));
+        assertEquals(playerWithName.getName(), updatedPlayer.getName());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("PlayerServiceTest - Test update Player return IllegalArgumentException")
+    void updatePlayerName_if_id_null_thenExceptionIsThrown() {
+        PlayerDtoRequest playerDtoRequest = PlayerDtoRequest.builder().name("Sonia").build();
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                () -> playerService.updateNamePlayer(null, playerDtoRequest));
+
+        assertEquals("Player ID cannot be null", illegalArgumentException.getMessage());
+    }
+
+
 }
