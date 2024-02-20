@@ -1,34 +1,37 @@
 package com.itacademy.diceGame.model.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Objects;
+import java.sql.Timestamp;
 
 @Data
 @Builder
-@Document(collection = "players")
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "players")
 public class Player implements Serializable {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
-    private LocalDate registration_date;
-    private Double successRate;
+    @CreationTimestamp(source = SourceType.DB)
+    private Timestamp registration_date;
 
     public Player(String name){
-        this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
+        this.name =  WordUtils.capitalize(StringUtils.defaultIfBlank(name,"ANONYMOUS"));
     }
 
-    public void setName(String name) {
-        this.name = WordUtils.capitalize(Objects.requireNonNullElse(name, "ANONYMOUS"));
+    public void setName(String name){
+        this.name =  WordUtils.capitalize(StringUtils.defaultIfBlank(name,"ANONYMOUS"));
     }
 }

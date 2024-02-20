@@ -22,8 +22,15 @@ public class PlayerServiceImpl implements PlayerService {
     private final GamesService gamesService;
 
     @Override
-    public Player getPlayerByID(String id){
+    public Player getPlayerByID(Long id){
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
+    }
+
+    private void checkNameNotUsed(String name){
+        playerRepository.findByNameIgnoreCase(name)
+                .ifPresent(player -> {
+                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
+                });
     }
 
     @Override
@@ -31,67 +38,46 @@ public class PlayerServiceImpl implements PlayerService {
         List<Player> playerEntityList = playerRepository.findAll();
         List<PlayerDto> playerDtoList = new ArrayList<>();
         playerEntityList.forEach( player -> {
-            playerDtoList.add(new PlayerDto(player.getName(), player.getSuccessRate()));
+            playerDtoList.add(playerEntityToDto(player));
         });
         return playerDtoList;
     }
 
     @Override
-    public PlayerDto createPlayer(PlayerDto playerDto) {
-        playerRepository.findByNameIgnoreCase(playerDto.getName())
-                .ifPresent(player -> {
-                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
-                });
-        Player newPlayer = playerRepository.save(new Player(playerDto.getName()));
+    public PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest) {
+        checkNameNotUsed(playerDtoRequest.getName());
+        Player player = playerDtoRequestToEntity(playerDtoRequest);
+        Player newPlayer = playerRepository.save(player);
+        gamesService.addGameHistory(newPlayer.getId());
         return playerEntityToDto(newPlayer);
     }
 
     @Override
-    public PlayerDto updateNamePlayer(String id, PlayerDtoRequest playerDtoRequest) {
+    public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
         Player player = getPlayerByID(id);
         if (!player.getName().equalsIgnoreCase(playerDtoRequest.getName())){
+            checkNameNotUsed(playerDtoRequest.getName());
             player.setName(playerDtoRequest.getName());
         }
         return playerEntityToDto(playerRepository.save(player));
     }
 
     @Override
-    public List<GameDto> getAllGamesByPlayerId(String id){
+    public List<GameDto> getAllGamesByPlayerId(Long id){
         getPlayerByID(id);
-        return gamesService.getAllGamesByPlayerId(id);
+        return gamesService.getAllGamesDtoByPlayerId(id);
     }
 
     @Override
-    public GameDto playGame(String id) {
-        Player player = getPlayerByID(id);
-        GameDto gameDto = gamesService.playGame(player);
-        updateSuccessRate(player, gameDto);
-        return gameDto;
-    }
-
-    private void updateSuccessRate(Player player, GameDto gameDto) {
-        Double successRate = player.getSuccessRate();
-        double isGameWon = 0d;
-        if (gameDto.hasWon()){
-            isGameWon = 1.0d;
-        }
-        if (successRate == null){
-            successRate = isGameWon * 100;
-        } else {
-            int gamesPlayed = gamesService.getAllGamesByPlayerId(player.getId()).size();
-            int gamesWon = (int) Math.ceil((successRate / 100) * (gamesPlayed - 1));
-            successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
-        }
-        player.setSuccessRate(successRate);
-        playerRepository.save(player);
+    public GameDto playGame(Long id) {
+        getPlayerByID(id);
+        return gamesService.playGame(id);
     }
 
     @Override
-    public void deleteAllGames(String id) {
+    public void deleteAllGames(Long id) {
         Player player = getPlayerByID(id);
-        gamesService.deleteAllGames(player);
-        player.setSuccessRate(null);
-        playerRepository.save(player);
+        gamesService.deleteAllGames(id);
     }
 
     @Override
@@ -131,7 +117,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto playerEntityToDto(Player player) {
-        return new PlayerDto(player.getName(), player.getSuccessRate());
+        return new PlayerDto(player.getName(), gamesService.getSuccessRate(player.getId()));
     }
 
     @Override

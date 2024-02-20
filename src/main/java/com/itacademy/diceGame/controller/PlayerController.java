@@ -27,31 +27,31 @@ public class PlayerController {
 
     @Operation(summary = "Create new Player")
     @PostMapping("/")
-    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDto playerDto){
-        return ResponseEntity.ok().body(playerService.createPlayer(playerDto));
+    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+        return ResponseEntity.ok().body(playerService.createPlayer(playerDtoRequest));
     }
 
     @Operation(summary = "Update Player's name")
     @PutMapping("/{id}")
-    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") String id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
         return ResponseEntity.ok().body(playerService.updateNamePlayer(id, playerDtoRequest));
     }
 
     @Operation(summary = "Get All Games of Player")
     @GetMapping("/{id}/games")
-    public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") String id){
+    public ResponseEntity<List<GameDto>> getAllGamesByPlayerId(@PathVariable(value = "id") Long id){
         return ResponseEntity.ok().body(playerService.getAllGamesByPlayerId(id));
     }
 
     @Operation(summary = "Player plays Game")
     @PostMapping("/{id}/games")
-    public ResponseEntity<GameDto> playGame(@PathVariable(value = "id") String id){
+    public ResponseEntity<GameDto> playGame(@PathVariable(value = "id") Long id){
         return ResponseEntity.ok().body(playerService.playGame(id));
     }
 
     @Operation(summary = "Delete All Games of Player")
     @DeleteMapping("/{id}/games")
-    public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") String id){
+    public ResponseEntity<String> deleteAllGames(@PathVariable(value = "id") Long id){
         playerService.deleteAllGames(id);
         return ResponseEntity.ok().body("Deleted all games from player with ID: " + id);
     }

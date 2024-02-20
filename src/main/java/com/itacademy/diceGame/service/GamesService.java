@@ -2,14 +2,15 @@ package com.itacademy.diceGame.service;
 
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.entity.Game;
-import com.itacademy.diceGame.model.entity.Player;
 
 import java.util.List;
 
 public interface GamesService {
-    List<GameDto> getAllGamesByPlayerId(String id);
-    GameDto playGame(Player player);
-    void deleteAllGames(Player player);
+    void addGameHistory(Long id);
+    List<GameDto> getAllGamesDtoByPlayerId(Long id);
+    GameDto playGame(Long id);
+    void deleteAllGames(Long id);
+    Double getSuccessRate(Long id);
     GameDto gameEntityToDto(Game game);
-    Game gameDtoToEntity(GameDto gameDto, Player player);
+    Game gameDtoToEntity(GameDto gameDto);
 }
