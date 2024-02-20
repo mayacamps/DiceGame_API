@@ -1,7 +1,6 @@
 package com.itacademy.diceGame.service.impl;
 
 import com.itacademy.diceGame.exceptions.NoGamesSavedException;
-import com.itacademy.diceGame.exceptions.PlayerAlreadyExistsException;
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
@@ -13,7 +12,10 @@ import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +26,6 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public Player getPlayerByID(Long id){
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
-    }
-
-    private void checkNameNotUsed(String name) {
-        playerRepository.findByNameIgnoreCase(name)
-                .ifPresent(player -> {
-                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
-                });
     }
 
     @Override
@@ -45,7 +40,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest) {
-        checkNameNotUsed(playerDtoRequest.getName());
         Player player = playerDtoRequestToEntity(playerDtoRequest);
         Player newPlayer = playerRepository.save(player);
         gamesService.createGameHistory(newPlayer.getId());
@@ -57,9 +51,8 @@ public class PlayerServiceImpl implements PlayerService {
         Player player = getPlayerByID(id);
         if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName()) &&
             !playerDtoRequest.getName().equalsIgnoreCase("anonymous")){
-            checkNameNotUsed(playerDtoRequest.getName());
+            player.setName(playerDtoRequest.getName());
         }
-        player.setName(playerDtoRequest.getName());
         return playerEntityToDto(playerRepository.save(player));
     }
 

@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerDtoRequest {
-    @Size(max = 15, message = "Cannot be longer than 15 characters.")
+    @Size(min=1, max = 15, message = "Introduce a name. Cannot be more than 15 characters long.")
     private String name;
 }
