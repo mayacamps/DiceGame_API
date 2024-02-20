@@ -1,6 +1,5 @@
 package com.itacademy.diceGame.model.dto;
 
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import java.math.RoundingMode;
 @Builder
 @NoArgsConstructor
 public class PlayerDto {
-    @Size(min = 2, max = 20)
     private String name;
     private Double successRate;
 

@@ -1,47 +1,98 @@
 package com.itacademy.diceGame.service.impl;
 
 import com.itacademy.diceGame.exceptions.NoGamesSavedException;
+import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.entity.Game;
-import com.itacademy.diceGame.model.entity.Player;
-import com.itacademy.diceGame.repository.*;
+import com.itacademy.diceGame.model.entity.GameHistory;
+import com.itacademy.diceGame.repository.GamesRepository;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.utils.RandomDiceGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class GamesServiceImpl implements GamesService {
     private final GamesRepository gamesRepository;
 
-    private List<Game> getGames(String id){
-        return gamesRepository.findByPlayerId(id);
+    @Override
+    public void createGameHistory(Long id) {
+        gamesRepository.save(new GameHistory(id));
     }
 
     @Override
-    public List<GameDto> getAllGamesByPlayerId(String id) {
-        List<Game> games = getGames(id);
-        List<GameDto> gameDtos = new ArrayList<GameDto>();
+    public List<GameDto> getAllGamesDtoByPlayerId(Long id) {
+        List<Game> games = getAllGamesByPlayerId(id);
+        List<GameDto> gameDtos = new ArrayList<>();
         games.forEach(game -> gameDtos.add(gameEntityToDto(game)));
-        if (gameDtos.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
         return gameDtos;
     }
 
-    @Override
-    public GameDto playGame(Player player) {
-        GameDto gameDto = new GameDto(RandomDiceGenerator.throwDice(), RandomDiceGenerator.throwDice());
-        gamesRepository.save(gameDtoToEntity(gameDto, player));
-        return gameDto;
+    private List<Game> getAllGamesByPlayerId(Long id) {
+        GameHistory gameHistory = getGameHistoryById(id);
+        List<Game> games = gameHistory.getGames();
+        if (games.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
+        return games;
+    }
+
+    private GameHistory getGameHistoryById(Long id){
+        try{
+            return gamesRepository.findByPlayerId(id);
+        } catch (NoSuchElementException ex){
+            throw new PlayerNotFoundException("Player not found with id: " + id);
+        }
     }
 
     @Override
-    public void deleteAllGames(Player player) {
-        List<Game> games = getGames(player.getId());
-        if (games.isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + player.getId());
-        games.forEach(gamesRepository::delete);
+    public GameDto playGame(Long id) {
+        GameDto gameDto = new GameDto(RandomDiceGenerator.throwDice(), RandomDiceGenerator.throwDice());
+        updateGameHistory(id, gameDto);
+        return gameDto;
+    }
+
+    private void updateGameHistory(Long id, GameDto gameDto){
+        GameHistory gameHistory = getGameHistoryById(id);
+        Double updatedSuccessRate = updateSuccessRate(gameHistory, gameDto);
+
+        gameHistory.addGame(gameDtoToEntity(gameDto));
+        gameHistory.setSuccessRate(updatedSuccessRate);
+        gamesRepository.save(gameHistory);
+    }
+
+    private Double updateSuccessRate(GameHistory gameHistory, GameDto gameDto) {
+        Double successRate = gameHistory.getSuccessRate();
+        double isGameWon = 0d;
+        if (gameDto.hasWon()){
+            isGameWon = 1.0d;
+        }
+        if (successRate == null){
+            successRate = isGameWon * 100;
+        } else {
+            int gamesPlayed = gameHistory.getGames().size();
+            int gamesWon = (int) Math.ceil((successRate / 100) * (gamesPlayed - 1));
+            successRate = (gamesWon + isGameWon) / gamesPlayed * 100;
+        }
+        return successRate;
+    }
+
+    @Override
+    public void deleteAllGames(Long id) {
+        GameHistory gameHistory = getGameHistoryById(id);
+        gameHistory.setSuccessRate(null);
+        if (gameHistory.getGames().isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
+        gameHistory.setGames(new ArrayList<>());
+        gamesRepository.save(gameHistory);
+    }
+
+    @Override
+    public Double getSuccessRate(Long id) {
+        GameHistory gameHistory = getGameHistoryById(id);
+        return gameHistory.getSuccessRate();
     }
 
     @Override
@@ -50,7 +101,7 @@ public class GamesServiceImpl implements GamesService {
     }
 
     @Override
-    public Game gameDtoToEntity(GameDto gameDto, Player player) {
-        return new Game(gameDto.getDice1(), gameDto.getDice2(), player);
+    public Game gameDtoToEntity(GameDto gameDto) {
+        return new Game(gameDto.getDice1(), gameDto.getDice2());
     }
 }

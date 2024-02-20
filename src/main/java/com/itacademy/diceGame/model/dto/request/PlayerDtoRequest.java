@@ -1,6 +1,5 @@
 package com.itacademy.diceGame.model.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerDtoRequest {
-    @NotBlank(message = "Please enter a name.")
-    @Size(min = 2, max = 20)
+    @Size(max = 15, message = "Cannot be longer than 15 characters.")
     private String name;
 }

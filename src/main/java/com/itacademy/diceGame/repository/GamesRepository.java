@@ -1,12 +1,10 @@
 package com.itacademy.diceGame.repository;
 
-import com.itacademy.diceGame.model.entity.Game;
+import com.itacademy.diceGame.model.entity.GameHistory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface GamesRepository extends MongoRepository<Game, String> {
-    List<Game> findByPlayerId(String id);
+public interface GamesRepository extends MongoRepository<GameHistory, String> {
+    GameHistory findByPlayerId(Long id);
 }
