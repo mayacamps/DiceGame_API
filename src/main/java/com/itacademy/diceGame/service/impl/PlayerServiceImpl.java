@@ -1,6 +1,7 @@
 package com.itacademy.diceGame.service.impl;
 
 import com.itacademy.diceGame.exceptions.NoGamesSavedException;
+import com.itacademy.diceGame.exceptions.PlayerAlreadyExistsException;
 import com.itacademy.diceGame.exceptions.PlayerNotFoundException;
 import com.itacademy.diceGame.model.dto.GameDto;
 import com.itacademy.diceGame.model.dto.PlayerDto;
@@ -28,6 +29,13 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
     }
 
+    private void checkNameNotUsed(String name) {
+        playerRepository.findByNameIgnoreCase(name)
+                .ifPresent(player -> {
+                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
+                });
+    }
+
     @Override
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
         List<Player> playerEntityList = playerRepository.findAll();
@@ -39,20 +47,24 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto createPlayer(PlayerDtoRequest playerDtoRequest) {
+    public void createPlayer(PlayerDtoRequest playerDtoRequest) {
+        checkNameNotUsed(playerDtoRequest.getName());
         Player player = playerDtoRequestToEntity(playerDtoRequest);
-        Player newPlayer = playerRepository.save(player);
-        gamesService.createGameHistory(newPlayer.getId());
-        return playerEntityToDto(newPlayer);
+        playerRepository.save(player);
+        gamesService.createGameHistory(player.getId());
     }
 
     @Override
     public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
+        if (id == null) {
+            throw new IllegalArgumentException("Player ID cannot be null");
+        }
         Player player = getPlayerByID(id);
         if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName()) &&
             !playerDtoRequest.getName().equalsIgnoreCase("anonymous")){
-            player.setName(playerDtoRequest.getName());
+            checkNameNotUsed(playerDtoRequest.getName());
         }
+        player.setName(playerDtoRequest.getName());
         return playerEntityToDto(playerRepository.save(player));
     }
 

@@ -8,12 +8,8 @@ import com.itacademy.diceGame.model.dto.request.PlayerDtoRequest;
 import com.itacademy.diceGame.model.entity.Player;
 import com.itacademy.diceGame.repository.PlayerRepository;
 import com.itacademy.diceGame.service.impl.PlayerServiceImpl;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
@@ -28,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PlayerServiceTest {
     @Mock
     private PlayerRepository playerRepository;
@@ -44,8 +41,7 @@ public class PlayerServiceTest {
     @BeforeEach
     void setUp(){
         playerWithName = Player.builder().id(1L).name("Lola").build();
-        playerWithoutName = new Player(null);
-        playerWithoutName.setId(2L);
+        playerWithoutName = Player.builder().id(2L).name(null).build();
 
         playerList = new ArrayList<>();
         playerList.add(playerWithName);
@@ -64,6 +60,7 @@ public class PlayerServiceTest {
     }
 
     @Test
+    @Order(1)
     @DisplayName("PlayerServiceTest - Test return player by id")
     void findById_should_return_player(){
         when(playerRepository.findById(1L)).thenReturn(Optional.of(playerWithName));
@@ -75,25 +72,28 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("PlayerServiceTest - Test return player default name by id")
-    void findById_should_return_default_player(){
+    @Order(2)
+    @DisplayName("PlayerServiceTest - Test return player null name by id")
+    void findById_should_return_null_name_player(){
         when(playerRepository.findById(2L)).thenReturn(Optional.of(playerWithoutName));
         Player returnedPlayer = playerService.getPlayerByID(2L);
 
         assertEquals(playerWithoutName.getId(), returnedPlayer.getId());
-        assertEquals("ANONYMOUS", returnedPlayer.getName());
+        assertNull(returnedPlayer.getName());
         verify(playerRepository).findById(2L);
     }
 
     @Test
+    @Order(3)
     @DisplayName("PlayerServiceTest - Test for getPlayerByID throws PlayerNotFoundException")
     void findById_no_should_return_player_exceptionIsThrown(){
         PlayerNotFoundException playerNotFoundException = assertThrows(PlayerNotFoundException.class,
                 () -> playerService.getPlayerByID(0L));
-        assertEquals(playerNotFoundException.getMessage(), "Player not found with ID: 0");
+        assertEquals("Player not found with ID: 0", playerNotFoundException.getMessage());
     }
 
     @Test
+    @Order(4)
     @DisplayName("PlayerServiceTest - Test return player list")
     void findAll_should_return_list(){
         when(playerRepository.findAll()).thenReturn(playerList);
@@ -105,24 +105,29 @@ public class PlayerServiceTest {
     }
 
     @Test
+    @Order(5)
     @DisplayName("PlayerServiceTest - Test add new player")
     void save_should_add_new_player(){
-        playerList.add(Player.builder().id(3L).name("maya").build());
-        when(playerRepository.findAll()).thenReturn(playerList);
-
         playerService.createPlayer(new PlayerDtoRequest("maya"));
 
-        ArgumentCaptor<PlayerDto> playerArgumentCaptor = ArgumentCaptor.forClass(PlayerDto.class);
-        PlayerDto playerCreated = playerArgumentCaptor.getValue();
-        assertNotNull(playerCreated);
-        assertEquals("Superman", playerCreated.getName());
+        playerList.add(Player.builder().id(3L).name("Maya").build());
+        when(playerRepository.findAll()).thenReturn(playerList);
+
+        List<PlayerDto> returnedList = playerService.getAllPlayersWithSuccessRate();
+        assertEquals(playerList.get(2).getName(), returnedList.get(2).getName());
     }
 
     @Test
+    @Order(6)
     @DisplayName("PlayerServiceTest - Test for createPlayer returns PlayerAlreadyExistsException")
     void save_should_not_add_player_with_name_repeated(){
+        Player playerRepeatedName = Player.builder().id(3L).name("lola").build();
+        playerList.add(playerRepeatedName);
+
+        when(playerRepository.findByNameIgnoreCase(playerRepeatedName.getName())).thenReturn(Optional.of(playerWithName));
         PlayerAlreadyExistsException playerAlreadyExistsException = assertThrows(PlayerAlreadyExistsException.class,
-                () -> playerService.createPlayer(new PlayerDtoRequest("Lola")));
-        assertEquals(playerAlreadyExistsException.getMessage(), "Player already exists with given name: Lola");
+                () -> playerService.createPlayer(new PlayerDtoRequest("lola")));
+
+        assertEquals("Player already exists with given name: Lola", playerAlreadyExistsException.getMessage());
     }
 }

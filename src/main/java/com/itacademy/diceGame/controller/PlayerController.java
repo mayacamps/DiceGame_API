@@ -7,6 +7,7 @@ import com.itacademy.diceGame.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,9 @@ public class PlayerController {
 
     @Operation(summary = "Create new Player")
     @PostMapping("/")
-    public ResponseEntity<PlayerDto> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
-        return ResponseEntity.ok().body(playerService.createPlayer(playerDtoRequest));
+    public ResponseEntity<String> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+        playerService.createPlayer(playerDtoRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Player successfully added with name: " + playerDtoRequest.getName());
     }
 
     @Operation(summary = "Update Player's name")
