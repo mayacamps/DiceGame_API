@@ -26,7 +26,7 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
     }
 
-    private void checkNameNotUsed(String name){
+    private void checkNameNotUsed(String name) {
         playerRepository.findByNameIgnoreCase(name)
                 .ifPresent(player -> {
                     throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
@@ -48,17 +48,18 @@ public class PlayerServiceImpl implements PlayerService {
         checkNameNotUsed(playerDtoRequest.getName());
         Player player = playerDtoRequestToEntity(playerDtoRequest);
         Player newPlayer = playerRepository.save(player);
-        gamesService.addGameHistory(newPlayer.getId());
+        gamesService.createGameHistory(newPlayer.getId());
         return playerEntityToDto(newPlayer);
     }
 
     @Override
     public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
         Player player = getPlayerByID(id);
-        if (!player.getName().equalsIgnoreCase(playerDtoRequest.getName())){
+        if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName()) &&
+            !playerDtoRequest.getName().equalsIgnoreCase("anonymous")){
             checkNameNotUsed(playerDtoRequest.getName());
-            player.setName(playerDtoRequest.getName());
         }
+        player.setName(playerDtoRequest.getName());
         return playerEntityToDto(playerRepository.save(player));
     }
 
@@ -76,7 +77,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public void deleteAllGames(Long id) {
-        Player player = getPlayerByID(id);
+        getPlayerByID(id);
         gamesService.deleteAllGames(id);
     }
 

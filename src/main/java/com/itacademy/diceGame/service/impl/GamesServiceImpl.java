@@ -21,7 +21,7 @@ public class GamesServiceImpl implements GamesService {
     private final GamesRepository gamesRepository;
 
     @Override
-    public void addGameHistory(Long id) {
+    public void createGameHistory(Long id) {
         gamesRepository.save(new GameHistory(id));
     }
 
@@ -84,6 +84,7 @@ public class GamesServiceImpl implements GamesService {
     public void deleteAllGames(Long id) {
         GameHistory gameHistory = getGameHistoryById(id);
         gameHistory.setSuccessRate(null);
+        if (gameHistory.getGames().isEmpty()) throw new NoGamesSavedException("No games saved for player with id: " + id);
         gameHistory.setGames(new ArrayList<>());
         gamesRepository.save(gameHistory);
     }
@@ -91,7 +92,6 @@ public class GamesServiceImpl implements GamesService {
     @Override
     public Double getSuccessRate(Long id) {
         GameHistory gameHistory = getGameHistoryById(id);
-        if (gameHistory.getSuccessRate() == null) return null;
         return gameHistory.getSuccessRate();
     }
 

@@ -6,7 +6,7 @@ import com.itacademy.diceGame.model.entity.Game;
 import java.util.List;
 
 public interface GamesService {
-    void addGameHistory(Long id);
+    void createGameHistory(Long id);
     List<GameDto> getAllGamesDtoByPlayerId(Long id);
     GameDto playGame(Long id);
     void deleteAllGames(Long id);
