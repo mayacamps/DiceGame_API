@@ -102,7 +102,6 @@ public class PlayerServiceTest {
     @DisplayName("PlayerServiceTest - Test add new player")
     void save_should_add_new_player(){
         playerService.createPlayer(new PlayerDtoRequest("maya"));
-
         playerList.add(Player.builder().id(3L).name("Maya").build());
         when(playerRepository.findAll()).thenReturn(playerList);
 
@@ -110,6 +109,7 @@ public class PlayerServiceTest {
         assertEquals(3, returnedList.size());
         assertEquals("Maya", returnedList.get(2).getName());
         verify(playerRepository).save(any());
+        verify(gamesService).createGameHistory(any());
     }
 
     @Test @Order(6)
