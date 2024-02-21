@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.WordUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 
@@ -27,7 +28,7 @@ public class Player implements Serializable {
     private Timestamp registration_date;
 
     public Player(String name){
-        this.name = name;
+        this.name = WordUtils.capitalize(name);
     }
 
 }

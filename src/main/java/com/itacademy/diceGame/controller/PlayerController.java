@@ -35,8 +35,9 @@ public class PlayerController {
 
     @Operation(summary = "Update Player's name")
     @PutMapping("/{id}")
-    public ResponseEntity<PlayerDto> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
-        return ResponseEntity.ok().body(playerService.updateNamePlayer(id, playerDtoRequest));
+    public ResponseEntity<String> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
+        playerService.updateNamePlayer(id, playerDtoRequest);
+        return ResponseEntity.ok().body("Player successfully updated with name: " + playerDtoRequest.getName());
     }
 
     @Operation(summary = "Get All Games of Player")

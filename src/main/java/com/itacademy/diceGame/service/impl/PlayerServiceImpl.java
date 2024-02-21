@@ -11,6 +11,7 @@ import com.itacademy.diceGame.repository.PlayerRepository;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,13 +30,6 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findById(id).orElseThrow(()-> new PlayerNotFoundException("Player not found with ID: " + id));
     }
 
-    private void checkNameNotUsed(String name) {
-        playerRepository.findByNameIgnoreCase(name)
-                .ifPresent(player -> {
-                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
-                });
-    }
-
     @Override
     public List<PlayerDto> getAllPlayersWithSuccessRate(){
         List<Player> playerEntityList = playerRepository.findAll();
@@ -48,24 +42,33 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public void createPlayer(PlayerDtoRequest playerDtoRequest) {
-        checkNameNotUsed(playerDtoRequest.getName());
         Player player = playerDtoRequestToEntity(playerDtoRequest);
-        playerRepository.save(player);
-        gamesService.createGameHistory(player.getId());
+        try{
+            playerRepository.save(player);
+            gamesService.createGameHistory(player.getId());
+        } catch(DataIntegrityViolationException ex){
+            throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
+        }
     }
 
     @Override
-    public PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
+    public void updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest) {
         if (id == null) {
             throw new IllegalArgumentException("Player ID cannot be null");
         }
         Player player = getPlayerByID(id);
-        if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName()) &&
-            !playerDtoRequest.getName().equalsIgnoreCase("anonymous")){
+        if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName())){
             checkNameNotUsed(playerDtoRequest.getName());
         }
         player.setName(playerDtoRequest.getName());
-        return playerEntityToDto(playerRepository.save(player));
+        playerEntityToDto(playerRepository.save(player));
+    }
+
+    private void checkNameNotUsed(String name) {
+        playerRepository.findByNameIgnoreCase(name)
+                .ifPresent(player -> {
+                    throw new PlayerAlreadyExistsException("Player already exists with given name: " + player.getName());
+                });
     }
 
     @Override

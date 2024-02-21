@@ -11,7 +11,7 @@ public interface PlayerService {
     Player getPlayerByID(Long id);
     List<PlayerDto> getAllPlayersWithSuccessRate();
     void createPlayer(PlayerDtoRequest playerDtoRequest);
-    PlayerDto updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest);
+    void updateNamePlayer(Long id, PlayerDtoRequest playerDtoRequest);
     List<GameDto> getAllGamesByPlayerId(Long id);
     GameDto playGame(Long id);
     void deleteAllGames(Long id);
