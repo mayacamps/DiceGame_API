@@ -179,5 +179,5 @@ public class GameServiceTest {
 
         assertEquals(expectedSuccessRate, returnedSuccessRate);
     }
-    
+
 }

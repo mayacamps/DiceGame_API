@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/dicegame/players")
-public class PlayerController {
+public class DiceGameController {
     private final PlayerService playerService;
 
     @Operation(summary = "Show All Players with their Success Rate")
