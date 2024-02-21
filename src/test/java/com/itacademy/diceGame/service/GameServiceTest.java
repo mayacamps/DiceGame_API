@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -32,7 +31,6 @@ public class GameServiceTest {
 
     private Player player;
     private Player playerNoGames;
-    private List<Player> playerList;
     private GameHistory gameHistory;
     private GameHistory gameHistoryNoGames;
     private List<Game> gameList;
@@ -52,8 +50,6 @@ public class GameServiceTest {
         gameListEmpty = new ArrayList<>();
         gameHistoryNoGames.setGames(gameListEmpty);
         gameHistoryNoGames.setSuccessRate(null);
-
-        playerList = new ArrayList<>(Arrays.asList(player, playerNoGames));
     }
 
     @AfterEach
@@ -134,4 +130,54 @@ public class GameServiceTest {
         assertNotNull(returnedGame);
         assertEquals(expectedSuccessRate, gameHistory.getSuccessRate());
     }
+
+    @Test
+    @DisplayName("GameServiceTest - Test delete all Games by Id")
+    void save_emptyGames_should_delete_all_games(){
+        Long playerId = player.getId();
+        when(gamesRepository.findByPlayerId(playerId)).thenReturn(gameHistory);
+
+        gamesService.deleteAllGames(playerId);
+
+        Exception exception = assertThrows(NoGamesSavedException.class,
+                () -> gamesService.getAllGamesDtoByPlayerId(playerId));
+        verify(gamesRepository).save(gameHistory);
+        assertNull(gameHistory.getSuccessRate());
+        assertEquals(new ArrayList<>(), gameHistory.getGames());
+        assertEquals("No games saved for player with id: " + playerId, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("GameServiceTest - Test for deleteAllGames throws NoGamesSavedException")
+    void deleteAllGames_if_no_games_exceptionIsThrown(){
+        Long playerId = playerNoGames.getId();
+        when(gamesRepository.findByPlayerId(playerId)).thenReturn(gameHistoryNoGames);
+
+        Exception exception = assertThrows(NoGamesSavedException.class,
+                () -> gamesService.deleteAllGames(playerId));
+        assertEquals("No games saved for player with id: " + playerId, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("GameServiceTest - Test returns SucessRate")
+    void getSuccessRate_should_return_double(){
+        Long playerId = player.getId();
+        when(gamesRepository.findByPlayerId(playerId)).thenReturn(gameHistory);
+        Double expectedSuccessRate = gameHistory.getSuccessRate();
+        Double returnedSuccessRate = gamesService.getSuccessRate(playerId);
+
+        assertEquals(expectedSuccessRate, returnedSuccessRate);
+    }
+
+    @Test
+    @DisplayName("GameServiceTest - Test returns SucessRate when no games played")
+    void getSuccessRate_should_return_null(){
+        Long playerId = playerNoGames.getId();
+        when(gamesRepository.findByPlayerId(playerId)).thenReturn(gameHistoryNoGames);
+        Double expectedSuccessRate = gameHistoryNoGames.getSuccessRate();
+        Double returnedSuccessRate = gamesService.getSuccessRate(playerId);
+
+        assertEquals(expectedSuccessRate, returnedSuccessRate);
+    }
+    
 }
