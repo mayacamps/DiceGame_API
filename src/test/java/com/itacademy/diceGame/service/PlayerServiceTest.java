@@ -283,8 +283,9 @@ public class PlayerServiceTest {
         when(gamesService.getSuccessRate(1L)).thenReturn(null);
         when(gamesService.getSuccessRate(2L)).thenReturn(null);
 
-        assertThrows(NoGamesSavedException.class,
+        Exception exception = assertThrows(NoGamesSavedException.class,
                 () -> playerService.getAvgSuccessRate());
+        assertEquals("There are no games saved.", exception.getMessage());
         verify(playerRepository).findAll();
         verify(gamesService, times(playerList.size())).getSuccessRate(any());
     }
@@ -332,8 +333,9 @@ public class PlayerServiceTest {
         when(gamesService.getSuccessRate(1L)).thenReturn(null);
         when(gamesService.getSuccessRate(2L)).thenReturn(null);
 
-        assertThrows(NoGamesSavedException.class,
-                () -> playerService.getWinner());
+        Exception exception = assertThrows(NoGamesSavedException.class,
+                () -> playerService.getAvgSuccessRate());
+        assertEquals("There are no games saved.", exception.getMessage());
         verify(playerRepository).findAll();
         verify(gamesService, times(playerList.size())).getSuccessRate(any());
     }
@@ -381,8 +383,9 @@ public class PlayerServiceTest {
         when(gamesService.getSuccessRate(1L)).thenReturn(null);
         when(gamesService.getSuccessRate(2L)).thenReturn(null);
 
-        assertThrows(NoGamesSavedException.class,
-                () -> playerService.getLoser());
+        Exception exception = assertThrows(NoGamesSavedException.class,
+                () -> playerService.getAvgSuccessRate());
+        assertEquals("There are no games saved.", exception.getMessage());
         verify(playerRepository).findAll();
         verify(gamesService, times(playerList.size())).getSuccessRate(any());
     }

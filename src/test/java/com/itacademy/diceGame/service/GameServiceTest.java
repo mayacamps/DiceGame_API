@@ -149,7 +149,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("GameServiceTest - Test for deleteAllGames throws NoGamesSavedException")
-    void deleteAllGames_if_no_games_exceptionIsThrown(){
+    void deleteAllGames_if_player_no_games_exceptionIsThrown(){
         Long playerId = playerNoGames.getId();
         when(gamesRepository.findByPlayerId(playerId)).thenReturn(gameHistoryNoGames);
 

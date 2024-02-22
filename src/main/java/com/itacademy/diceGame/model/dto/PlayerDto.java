@@ -5,8 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.text.WordUtils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Objects;
 
 @Data
@@ -22,6 +21,7 @@ public class PlayerDto {
     }
 
     private Double formatDouble(Double successRate){
-        return (successRate == null) ? null : new BigDecimal(successRate).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        DecimalFormat df = new DecimalFormat("####0.00");
+        return (successRate == null) ? null : Double.valueOf(df.format(successRate));
     }
 }

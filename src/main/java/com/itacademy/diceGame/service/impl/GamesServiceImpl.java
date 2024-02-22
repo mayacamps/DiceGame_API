@@ -74,7 +74,7 @@ public class GamesServiceImpl implements GamesService {
             successRate = isGameWon * 100;
         } else {
             int gamesPlayed = gameHistory.getGames().size();
-            int gamesWon = (int) Math.ceil((successRate / 100) * gamesPlayed);
+            int gamesWon = (int) Math.round((successRate / 100) * gamesPlayed);
             successRate = (gamesWon + isGameWon) / (gamesPlayed + 1) * 100;
         }
         return successRate;
