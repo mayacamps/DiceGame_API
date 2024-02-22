@@ -1,0 +1,72 @@
+[
+  {
+    "playerId": 1,
+    "games": [],
+    "_class": "com.itacademy.diceGame.model.entity.GameHistory"
+  },
+  {
+    "playerId": 2,
+    "games": [
+      {
+        "dice1": 1,
+        "dice2": 2
+      },
+      {
+        "dice1": 2,
+        "dice2": 3
+      },
+      {
+        "dice1": 1,
+        "dice2": 3
+      },
+      {
+        "dice1": 4,
+        "dice2": 3
+      }
+    ],
+    "successRate": 25,
+    "_class": "com.itacademy.diceGame.model.entity.GameHistory"
+  },
+  {
+    "playerId": 3,
+    "games": [
+      {
+        "dice1": 4,
+        "dice2": 5
+      },
+      {
+        "dice1": 3,
+        "dice2": 4
+      },
+      {
+        "dice1": 3,
+        "dice2": 1
+      },
+      {
+        "dice1": 4,
+        "dice2": 6
+      }
+    ],
+    "successRate": 25,
+    "_class": "com.itacademy.diceGame.model.entity.GameHistory"
+  },
+  {
+    "playerId": 4,
+    "games": [
+      {
+        "dice1": 3,
+        "dice2": 4
+      },
+      {
+        "dice1": 2,
+        "dice2": 5
+      },
+      {
+        "dice1": 1,
+        "dice2": 6
+      }
+    ],
+    "successRate": 100,
+    "_class": "com.itacademy.diceGame.model.entity.GameHistory"
+  }
+]
