@@ -30,14 +30,14 @@ public class DiceGameController {
     @PostMapping("/")
     public ResponseEntity<String> createPlayer(@RequestBody @Valid PlayerDtoRequest playerDtoRequest){
         playerService.createPlayer(playerDtoRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Player successfully added with name: " + playerDtoRequest.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body("Player successfully added.");
     }
 
     @Operation(summary = "Update Player's name")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateNamePlayer(@PathVariable(value = "id") Long id, @RequestBody @Valid PlayerDtoRequest playerDtoRequest){
         playerService.updateNamePlayer(id, playerDtoRequest);
-        return ResponseEntity.ok().body("Player successfully updated with name: " + playerDtoRequest.getName());
+        return ResponseEntity.ok().body("Player successfully updated.");
     }
 
     @Operation(summary = "Get All Games of Player")

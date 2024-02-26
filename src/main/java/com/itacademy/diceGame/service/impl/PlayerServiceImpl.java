@@ -11,6 +11,7 @@ import com.itacademy.diceGame.repository.PlayerRepository;
 import com.itacademy.diceGame.service.GamesService;
 import com.itacademy.diceGame.service.PlayerService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,9 @@ public class PlayerServiceImpl implements PlayerService {
         if (!playerDtoRequest.getName().equalsIgnoreCase(player.getName())){
             checkNameNotUsed(playerDtoRequest.getName());
         }
-        player.setName(playerDtoRequest.getName());
+        String name = playerDtoRequest.getName().trim();
+        if (name.isEmpty()) name = null;
+        player.setName(StringUtils.capitalize(name));
         playerEntityToDto(playerRepository.save(player));
     }
 
@@ -131,6 +134,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player playerDtoRequestToEntity(PlayerDtoRequest playerDtoRequest){
-        return new Player(playerDtoRequest.getName());
+        String name = playerDtoRequest.getName().trim();
+        if (name.isEmpty()) name = null;
+        return new Player(name);
     }
 }

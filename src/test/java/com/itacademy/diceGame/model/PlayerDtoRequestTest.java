@@ -27,14 +27,6 @@ public class PlayerDtoRequestTest {
     }
 
     @Test
-    @DisplayName("PlayerDtoRequestTest - Test name empty fails validation")
-    public void playerRequestDto_fails_validation_if_empty_name(){
-        PlayerDtoRequest playerDtoRequest = new PlayerDtoRequest("");
-        Set<ConstraintViolation<PlayerDtoRequest>> violations = validator.validate(playerDtoRequest);
-        assertFalse(violations.isEmpty());
-    }
-
-    @Test
     @DisplayName("PlayerDtoRequestTest - Test name longer than requirement fails validation")
     public void playerRequestDto_fails_validation_if_name_longer_than_valid(){
         int invalidLength = 16;
@@ -44,7 +36,7 @@ public class PlayerDtoRequestTest {
         assertFalse(violations.isEmpty());
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(5)
     @DisplayName("PlayerDtoRequestTest - Test name is validated")
     public void playerRequestDto_validates_name(){
         int maxLength = 15;

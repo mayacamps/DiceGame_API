@@ -48,23 +48,23 @@ public class DiceGameControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(newPlayer)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$").value("Player successfully added with name: " + newPlayer.getName()));
+                .andExpect(jsonPath("$").value("Player successfully added."));
     }
 
     @Test
-    @DisplayName("DiceGameControllerIntegrationTest - Test create new Player")
-    void givenEmptyName_whenCreatePlayer_thenReturnStatusBadRequest() throws Exception {
+    @DisplayName("DiceGameControllerIntegrationTest - Test create new Player with empty name")
+    void givenEmptyName_whenCreatePlayer_thenReturnStatusCreated() throws Exception {
         PlayerDtoRequest newPlayer = new PlayerDtoRequest("");
         mvc.perform(post("/api/v1/dicegame/players/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newPlayer)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("name: Introduce a name. Cannot be more than 15 characters long."));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$").value("Player successfully added."));
     }
 
     @Test
-    @DisplayName("DiceGameControllerIntegrationTest - Test create new Player")
+    @DisplayName("DiceGameControllerIntegrationTest - Test create new Player throws Validation Error")
     void givenNameTooLong_whenCreatePlayer_thenReturnStatusBadRequest() throws Exception {
         PlayerDtoRequest newPlayer = new PlayerDtoRequest("aaaaaaaaaaaaaaaaaaaa");
         mvc.perform(post("/api/v1/dicegame/players/")
@@ -72,7 +72,7 @@ public class DiceGameControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(newPlayer)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("name: Introduce a name. Cannot be more than 15 characters long."));
+                .andExpect(jsonPath("$").value("name: Cannot be more than 15 characters long."));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class DiceGameControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(updatedPlayer)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("Player successfully updated with name: " + updatedPlayer.getName()));
+                .andExpect(jsonPath("$").value("Player successfully updated."));
     }
 
     @Test
@@ -194,6 +194,12 @@ public class DiceGameControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$").value("Deleted all games from player with ID: " + idPlayer));
+
+        mvc.perform(get("/api/v1/dicegame/players/{id}/games", idPlayer)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("No games saved for player with id: " + idPlayer));
     }
 
     @Test
