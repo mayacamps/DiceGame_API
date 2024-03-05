@@ -9,6 +9,7 @@ import com.itacademy.diceGame.model.dto.request.PlayerDtoRequest;
 import com.itacademy.diceGame.model.entity.Player;
 import com.itacademy.diceGame.repository.PlayerRepository;
 import com.itacademy.diceGame.service.impl.PlayerServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -134,7 +135,7 @@ public class PlayerServiceTest {
 
         playerService.updateNamePlayer(1L, new PlayerDtoRequest(newName));
 
-        assertEquals(newName, playerWithName.getName());
+        assertEquals(StringUtils.capitalize(newName), playerWithName.getName());
         verify(playerRepository).findById(1L);
         verify(playerRepository).findByNameIgnoreCase(newName);
         verify(playerRepository).save(playerWithName);
@@ -149,7 +150,7 @@ public class PlayerServiceTest {
 
         playerService.updateNamePlayer(1L, new PlayerDtoRequest(sameName));
 
-        assertEquals(sameName, playerWithName.getName());
+        assertEquals(StringUtils.capitalize(sameName), playerWithName.getName());
         verify(playerRepository).findById(1L);
         verify(playerRepository).save(playerWithName);
     }
